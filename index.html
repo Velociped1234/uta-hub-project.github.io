@@ -1,0 +1,381 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uta Hub | MM2 </title>
+    
+    <!-- ИКОНКА для вкладки браузера нижЕ (FAVICON) -->
+    <link rel="icon" type="image/png" href="https://d1wzdj81h1hubn.cloudfront.net/03f671adbbe471e5.png">
+    
+    <!-- Ссылка на иконку FONTAWESOME -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; scroll-behavior: smooth; }
+        
+        /* СТИЛИ для касмтомной полосы прокрутки (ПОЛОСА ПРОКРУТКИ) */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b0b0e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #ca13d4;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #e61df5;
+        }
+
+        /* Для поддержки в Firefox */
+        html {
+            scrollbar-width: thin;
+            scrollbar-color: #ca13d4 #0b0b0e;
+        }
+
+        /* цветовые переменные для ТЕМ */
+        body { background: #0b0b0e; color: #fff; overflow: hidden; transition: background 0.5s, color 0.5s; }
+        .highlight { color: #a855f7; text-shadow: 0 0 15px rgba(168,85,247,0.6); }
+
+        /* --- СТтили для Белой темы --- */
+        body.light-theme {
+            background: #eef0f3;
+            color: #1a1a24;
+        }
+        body.light-theme::-webkit-scrollbar-track {
+            background: #eef0f3;
+        }
+        body.light-theme {
+            scrollbar-color: #ca13d4 #eef0f3;
+        }
+        body.light-theme .navbar {
+            background: rgba(238, 240, 243, 0.85);
+            border-bottom: 1px solid rgba(168, 85, 247, 0.2);
+        }
+        body.light-theme .logo, body.light-theme .nav-links a {
+            color: #1a1a24;
+        }
+        body.light-theme .hero {
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.1) 0%, #eef0f3 70%);
+        }
+        body.light-theme .hero-content p {
+            color: #4b5563;
+        }
+        body.light-theme .settings-content {
+            background: #f7f7fa;
+        }
+        body.light-theme .settings-content h3 {
+            color: #1a1a24;
+        }
+        body.light-theme .settings-item {
+            background: rgba(0, 0, 0, 0.02);
+            border-color: rgba(168, 85, 247, 0.2);
+            color: #374151;
+        }
+        body.light-theme .opacity-badge {
+            background: rgba(0, 0, 0, 0.05);
+            color: #1a1a24;
+        }
+        /* ----------------------------------------------- */
+
+        /* (PRELOADER) */
+        .intro-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+            background: radial-gradient(circle, #161026 0%, #0b0b0e 100%);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 9999; 
+            overflow: hidden;
+            transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.6s ease;
+            transform: translateY(0);
+        }
+
+        /* Анимация Звёзд*/
+        .star {
+            position: absolute; background-color: #fff; border-radius: 50%; pointer-events: none; opacity: 0; animation: twinkle ease-in-out infinite;
+        }
+        @keyframes twinkle {
+            0% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: 1; transform: scale(1.5); box-shadow: 0 0 8px rgba(255, 255, 255, 0.8); }
+            100% { opacity: 0; transform: scale(0.5); }
+        }
+        
+        .intro-content-wrapper {
+            position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; animation: slideUpIn 1.2s ease-out forwards;
+        }
+        @keyframes slideUpIn {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .intro-logo-container { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
+        .intro-logo-container img {
+            width: 60px; height: 60px; object-fit: cover; border-radius: 50%; border: 2px solid #e61df5; animation: ninjaBlink 2s infinite ease-in-out;
+        }
+        @keyframes ninjaBlink {
+            0%, 100% { opacity: 1; box-shadow: 0 0 20px rgba(230, 29, 245, 0.8); }
+            50% { opacity: 0.1; box-shadow: 0 0 2px rgba(230, 29, 245, 0.1); }
+        }
+
+        .intro-title { display: flex; align-items: center; gap: 12px; font-size: 48px; font-weight: 800; letter-spacing: 1px; }
+        .uta-text { color: #fff; display: inline-block; animation: blinkWhite 2s infinite ease-in-out; }
+        .hub-text { color: #a855f7; display: inline-block; animation: blinkPurple 2s infinite ease-in-out; }
+        .key-blink-icon { color: #a855f7; font-size: 38px; display: inline-block; animation: blinkPurple 2s infinite ease-in-out; }
+
+        @keyframes blinkWhite {
+            0%, 100% { opacity: 1; text-shadow: 0 0 20px rgba(255, 255, 255, 0.8); }
+            50% { opacity: 0.2; text-shadow: 0 0 2px rgba(255, 255, 255, 0.1); }
+        }
+        @keyframes blinkPurple {
+            0%, 100% { opacity: 1; text-shadow: 0 0 20px rgba(168, 85, 247, 0.8); filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.6)); }
+            50% { opacity: 0.2; text-shadow: 0 0 2px rgba(168, 85, 247, 0.1); filter: drop-shadow(0 0 0px rgba(168, 85, 247, 0)); }
+        }
+        
+        .btn-enter {
+            background: rgba(168, 85, 247, 0.1); color: #a855f7; border: 2px solid #a855f7; padding: 12px 45px; font-size: 18px; font-weight: bold; border-radius: 50px; cursor: pointer; transition: 0.3s; box-shadow: 0 0 15px rgba(168,85,247,0.2);
+        }
+        .btn-enter:hover { background: #a855f7; color: #fff; box-shadow: 0 0 25px #a855f7; transform: scale(1.05); }
+        .intro-screen.fade-out { transform: translateY(100%); opacity: 0; pointer-events: none; }
+
+        /* Онов. сайт */
+        .main-content { opacity: 0; transition: 0.8s ease 0.2s; }
+        .main-content.visible { opacity: 1; }
+        
+        .navbar {
+            display: flex; justify-content: space-between; align-items: center; padding: 20px 8%; background: rgba(11,11,14,0.85); backdrop-filter: blur(10px); position: fixed; width: 100%; top: 0; z-index: 1000; border-bottom: 1px solid rgba(168,85,247,0.1); transition: background 0.5s;
+        }
+        .logo { display: flex; align-items: center; font-size: 24px; font-weight: 800; gap: 12px; }
+        .logo img { 
+            width: 45px; height: 45px; object-fit: cover; border-radius: 50%; border: 2px solid #e61df5; box-shadow: 0 0 10px rgba(230, 29, 245, 0.6); animation: levitate 3s ease-in-out infinite;
+        }
+        @keyframes levitate { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-6px); } }
+        
+        .logo span { color: #a855f7; }
+        .nav-links { display: flex; list-style: none; align-items: center; }
+        .nav-links li { margin-left: 30px; }
+        .nav-links a { color: #bcbcbc; text-decoration: none; font-weight: 500; transition: 0.3s; }
+        .nav-links a:hover, .nav-links a.active { color: #a855f7; }
+        .btn-download-nav { background: #a855f7; color: #fff !important; padding: 8px 20px; border-radius: 6px; box-shadow: 0 4px 15px rgba(168,85,247,0.4); }
+
+        .nav-settings-btn { color: #bcbcbc; font-size: 20px; cursor: pointer; transition: 0.4s ease; display: flex; align-items: center; }
+        .nav-settings-btn:hover { color: #a855f7; transform: rotate(90deg); filter: drop-shadow(0 0 8px #a855f7); }
+
+        /* ОКНО НАСТРОЕК */
+        .settings-window {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(8, 8, 10, 0.85); backdrop-filter: blur(10px); z-index: 20000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.4s ease;
+        }
+        .settings-window.open { opacity: 1; pointer-events: auto; }
+
+        .settings-content {
+            background: #111116; border: 2px solid #a855f7; border-radius: 16px; width: 90%; max-width: 400px; padding: 35px 25px; text-align: center; position: relative; box-shadow: 0 0 35px rgba(168, 85, 247, 0.25); transform: scale(0.8); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+        }
+        .settings-window.open .settings-content { transform: scale(1); }
+        .close-settings-btn { position: absolute; top: 15px; right: 20px; font-size: 22px; color: #6b7280; cursor: pointer; transition: 0.3s; }
+        .close-settings-btn:hover { color: #e61df5; }
+        .settings-content h3 { font-size: 24px; margin-bottom: 25px; font-weight: 700; letter-spacing: 1px; color: #fff; }
+        
+        .settings-list { display: flex; flex-direction: column; gap: 12px; }
+        .settings-item {
+            background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(168, 85, 247, 0.12); padding: 14px; border-radius: 8px; font-size: 17px; color: #d1d5db; cursor: pointer; transition: 0.3s; font-weight: 500;
+        }
+        .settings-item:hover {
+            background: rgba(168, 85, 247, 0.08); border-color: #a855f7; color: #fff; box-shadow: 0 0 12px rgba(168, 85, 247, 0.2); transform: translateY(-2px);
+        }
+
+        /* подменю ПРОЗРАЧНОСТИ */
+        .opacity-submenu {
+            display: none; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 4px; padding: 5px; animation: fadeIn 0.3s ease;
+        }
+        .opacity-badge {
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(168, 85, 247, 0.2); padding: 8px; border-radius: 6px; font-size: 14px; color: #fff; cursor: pointer; transition: 0.2s; font-weight: bold;
+        }
+        .opacity-badge:hover { background: #a855f7; color: #fff; box-shadow: 0 0 10px #a855f7; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ЭКРАНЫ И КОНТЕНТ ниже */
+        .hero {
+            height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; background: radial-gradient(circle, rgba(168,85,247,0.15) 0%, #0b0b0e 70%); padding: 0 20px; transition: background 0.5s;
+        }
+        .hero-content h1 { font-size: 50px; font-weight: 800; margin-bottom: 20px; }
+        .hero-content p { font-size: 18px; color: #9ca3af; max-width: 600px; margin: 0 auto 40px auto; line-height: 1.6; }
+        .hero-buttons { display: flex; gap: 20px; justify-content: center; }
+        .btn { padding: 14px 30px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: 0.3s; cursor: pointer; border: none; }
+        .btn-primary { background: #a855f7; color: #fff; box-shadow: 0 5px 20px rgba(168,85,247,0.4); }
+        .btn-primary:hover { background: #9333ea; transform: translateY(-2px); }
+        .btn-secondary { background: rgba(255, 255, 255, 0.05); color: #fff; border: 1px solid rgba(255, 255, 255, 0.1); }
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.1); }
+
+    </style>
+</head>
+<body>
+
+    <!-- Стартовый экран -->
+    <div class="intro-screen" id="introScreen">
+        <div class="intro-content-wrapper">
+            <div class="intro-logo-container">
+                <img src="https://d1wzdj81h1hubn.cloudfront.net/03f671adbbe471e5.png" alt="Logo">
+                <div class="intro-title">
+                    <span class="uta-text">UTA</span> 
+                    <span class="hub-text">HUB</span>
+                    <i class="fa-solid fa-key key-blink-icon"></i>
+                </div>
+            </div>
+            <button class="btn-enter" id="enterBtn">✦ Enter ✦</button>
+        </div>
+    </div>
+
+    <!-- Окно и гуи для Настроек -->
+    <div class="settings-window" id="settingsWindow">
+        <div class="settings-content" id="settingsContent">
+            <i class="fa-solid fa-xmark close-settings-btn" id="closeSettingsBtn"></i>
+            <h3>Настройки</h3>
+            <div class="settings-list">
+                <!-- Пункт ТЕМА -->
+                <div class="settings-item" id="themeToggleBtn">Тема</div>
+                
+                <!-- Пункт ПРОЗРАЧНОСТЬ -->
+                <div class="settings-item" id="opacityMenuBtn">Прозрачность</div>
+                <div class="opacity-submenu" id="opacitySubmenu">
+                    <div class="opacity-badge" data-value="0.1">10%</div>
+                    <div class="opacity-badge" data-value="0.3">30%</div>
+                    <div class="opacity-badge" data-value="0.5">50%</div>
+                    <div class="opacity-badge" data-value="0.75">75%</div>
+                </div>
+
+                <!-- Пункт СОЦ СЕТИ -->
+                <div class="settings-item" id="settingsSocialsBtn">Соц сети</div>
+                
+                <!-- Пункт ПОЛУЧИТЬ СКРИПТ ) -->
+                <div class="settings-item" id="settingsGetScriptBtn">Получить наш скрипт</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Основной сайт -->
+    <div class="main-content" id="mainContent">
+        <header class="navbar">
+            <div class="logo">
+                <img src="https://d1wzdj81h1hubn.cloudfront.net/03f671adbbe471e5.png" alt="Logo">
+                UTA <span>HUB</span>
+            </div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#home" class="active">Главная</a></li>
+                    <li><a href="Uta-Hub-Links.html">Наши соц сети</a></li>
+                    <!-- Ссылка в навигации теперь ведет на Uta-Hub-Script.html -->
+                    <li><a href="Uta-Hub-Script.html" class="btn-download-nav">Получить скрипт</a></li>
+                    <li><i class="fa-solid fa-gear nav-settings-btn" id="openSettingsBtn"></i></li>
+                </ul>
+            </nav>
+        </header>
+
+        <!-- Главный экран -->
+        <section id="home" class="hero">
+            <div class="hero-content">
+                <h1>Лучший скрипт для <span class="highlight">Murder Mystery 2 В Roblox</span></h1>
+                <p>Играй с ним в Murder Mystery 2. В нём есть: Auto Farm, ESP и многое другое уже ждёт тебя.</p>
+                <div class="hero-buttons">
+                    <!-- Кнопка по центру экрана ведет на Uta-Hub-Script.html -->
+                    <a href="Uta-Hub-Script.html" class="btn btn-primary"><i class="fa-solid fa-download"></i> Получить Скрипт</a>
+                    <a href="Uta-Hub-Links.html" class="btn btn-secondary">Наши соц сети</a>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Генерация Звёзд тут
+        function createStars() {
+            const introScreen = document.getElementById('introScreen');
+            const starCount = 50;
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                star.style.left = Math.random() * 100 + 'vw';
+                star.style.top = Math.random() * 100 + 'vh';
+                const size = Math.random() * 2 + 1;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                star.style.animationDuration = (Math.random() * 3 + 2) + 's'; 
+                star.style.animationDelay = (Math.random() * 5) + 's';
+                introScreen.insertBefore(star, introScreen.firstChild);
+            }
+        }
+        createStars();
+
+        // Логика входа
+        const introScreen = document.getElementById('introScreen');
+        const enterBtn = document.getElementById('enterBtn');
+        const mainContent = document.getElementById('mainContent');
+
+        enterBtn.addEventListener('click', () => {
+            introScreen.classList.add('fade-out');
+            mainContent.classList.add('visible');
+            document.body.style.overflow = 'auto';
+        });
+
+        // Модальное окно настрОеК
+        const settingsWindow = document.getElementById('settingsWindow');
+        const settingsContent = document.getElementById('settingsContent');
+        const openSettingsBtn = document.getElementById('openSettingsBtn');
+        const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+
+        openSettingsBtn.addEventListener('click', () => settingsWindow.classList.add('open'));
+        closeSettingsBtn.addEventListener('click', () => settingsWindow.classList.remove('open'));
+        settingsWindow.addEventListener('click', (e) => { if (e.target === settingsWindow) settingsWindow.classList.remove('open'); });
+
+        // Функционал переключение темы
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        themeToggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+        });
+
+        // Функционал: МЕНЮ ПРОЗРАЧНОСТИ
+        const opacityMenuBtn = document.getElementById('opacityMenuBtn');
+        const opacitySubmenu = document.getElementById('opacitySubmenu');
+        
+        opacityMenuBtn.addEventListener('click', () => {
+            if (opacitySubmenu.style.display === 'grid') {
+                opacitySubmenu.style.display = 'none';
+            } else {
+                opacitySubmenu.style.display = 'grid';
+            }
+        });
+
+        const opacityBadges = document.querySelectorAll('.opacity-badge');
+        opacityBadges.forEach(badge => {
+            badge.addEventListener('click', () => {
+                const opacityValue = badge.getAttribute('data-value');
+                settingsContent.style.opacity = opacityValue;
+            });
+        });
+
+        // Функционал: КНОПКА "СОЦ СЕТИ" В НАСТРОЙКАХ
+        const settingsSocialsBtn = document.getElementById('settingsSocialsBtn');
+        settingsSocialsBtn.addEventListener('click', () => {
+            window.location.href = 'Uta-Hub-Links.html';
+        });
+
+        // Функционал: КНОПКА "ПОЛУЧИТЬ СКРИПТ" В НАСТРОЙКАХ (ПЕРЕНАПРАВЛЕНИЕ НА СТРАНИЦУ ЗАДАНИЙ)
+        const settingsGetScriptBtn = document.getElementById('settingsGetScriptBtn');
+        settingsGetScriptBtn.addEventListener('click', () => {
+            window.location.href = 'Uta-Hub-Script.html'; 
+        });
+
+        // Изменение АКТИВНЫХ ССЫЛОК ПРИ СКРОЛЛЕ
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.nav-links a');
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                if (pageYOffset >= section.offsetTop - 150) current = section.getAttribute('id');
+            });
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').includes(current) && !link.classList.contains('btn-download-nav')) link.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

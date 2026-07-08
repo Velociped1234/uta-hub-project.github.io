@@ -1,0 +1,368 @@
+﻿
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uta Hub | Выполнение заданий</title>
+    
+    <!-- ИКОНКА ДЛЯ ВКЛАДКИ БРАУЗЕРА Снова -->
+    <link rel="icon" type="image/png" href="https://d1wzdj81h1hubn.cloudfront.net/03f671adbbe471e5.png">
+    
+    <!-- ИКОНКА FONTAWESOME -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; scroll-behavior: smooth; }
+        
+        /* кастомный СКРОЛЛБАР */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #0b0b0e; }
+        ::-webkit-scrollbar-thumb { background: #ca13d4; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #e61df5; }
+
+        body { 
+            background: #0b0b0e; 
+            color: #fff; 
+            min-height: 100vh; 
+            overflow-x: hidden; 
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Навигация */
+        .navbar {
+            display: flex; justify-content: space-between; align-items: center; padding: 20px 8%; background: rgba(11,11,14,0.85); backdrop-filter: blur(10px); position: fixed; width: 100%; top: 0; z-index: 1000; border-bottom: 1px solid rgba(202,19,212,0.1);
+        }
+        .logo { display: flex; align-items: center; font-size: 24px; font-weight: 800; gap: 12px; }
+        .logo img { width: 45px; height: 45px; object-fit: cover; border-radius: 50%; border: 2px solid #ca13d4; }
+        .logo span { color: #ca13d4; }
+        .nav-links { display: flex; list-style: none; align-items: center; }
+        .nav-links li { margin-left: 30px; }
+        .nav-links a { color: #bcbcbc; text-decoration: none; font-weight: 500; transition: 0.3s; }
+        .nav-links a:hover, .nav-links a.active { color: #ca13d4; }
+        .btn-download-nav { background: #ca13d4; color: #fff !important; padding: 8px 20px; border-radius: 6px; box-shadow: 0 4px 15px rgba(202,19,212,0.4); }
+
+        /* (Контейнер) */
+        .locker-container {
+            flex: 1;
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            padding: 120px 20px 40px 20px;
+            background: radial-gradient(circle, rgba(202,19,212,0.12) 0%, #0b0b0e 70%);
+        }
+
+        /* Прямоугольник заданий */
+        .card-body {
+            background: rgba(17, 17, 22, 0.75);
+            border: 2px solid rgba(202, 19, 212, 0.3);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 520px;
+            padding: 30px 25px;
+            box-shadow: 0 0 35px rgba(202, 19, 212, 0.2);
+            backdrop-filter: blur(12px);
+            text-align: center;
+        }
+
+        .tasks-heading {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            letter-spacing: 0.5px;
+            color: #fff;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 15px;
+        }
+
+        .tasks-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 25px;
+        }
+
+        /* Стиль каждого занятия */
+        .task-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(202, 19, 212, 0.15);
+            padding: 16px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .task-item:hover {
+            background: rgba(202, 19, 212, 0.08);
+            border-color: #ca13d4;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(202, 19, 212, 0.2);
+        }
+
+        /* Отключение наведения во время работы таймера */
+        .task-item.running {
+            cursor: wait;
+            pointer-events: none;
+        }
+
+        .task-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .task-icon-wrap {
+            font-size: 20px;
+            color: #ca13d4;
+            width: 30px;
+            text-align: center;
+        }
+
+        .task-text h4 {
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .task-text p {
+            font-size: 12px;
+            color: #858594;
+        }
+
+        /* Блок статуса */
+        .task-status {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: transparent;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        /* Стиль во время отсчета таймера (Кастомный розовый #e34beb) */
+        .task-item.running .task-status {
+            border-color: #e34beb;
+            color: #e34beb;
+            text-shadow: 0 0 8px rgba(227, 75, 235, 0.5);
+        }
+
+        /* Скрываем стандартную иконку галочки, пока идет таймер */
+        .task-status i {
+            display: none;
+        }
+
+        /* Стиль завершенного задания (Кастомный зеленый #1fff3d) */
+        .task-item.done {
+            border-color: #1fff3d;
+            background: rgba(31, 255, 61, 0.04);
+            pointer-events: none; /* Нельзя кликнуть повторно */
+        }
+        .task-item.done .task-status {
+            background: #1fff3d;
+            border-color: #1fff3d;
+            color: #000;
+            box-shadow: 0 0 10px rgba(31, 255, 61, 0.5);
+        }
+        .task-item.done .task-status i {
+            display: block;
+        }
+        .task-item.done .task-status span {
+            display: none;
+        }
+        .task-item.done .task-icon-wrap {
+            color: #1fff3d;
+        }
+
+        /* Кнопка Забрать Награду */
+        .btn-claim {
+            width: 100%;
+            padding: 16px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border: none;
+            background: #22222a;
+            color: #525265;
+            cursor: not-allowed;
+            transition: all 0.4s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        /* Кнопка активна */
+        .btn-claim.active {
+            background: #ca13d4;
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 0 25px rgba(202, 19, 212, 0.5);
+        }
+        .btn-claim.active:hover {
+            background: #e61df5;
+            box-shadow: 0 0 35px #e61df5;
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Шапочка сайта -->
+    <header class="navbar">
+        <div class="logo">
+            <img src="https://d1wzdj81h1hubn.cloudfront.net/03f671adbbe471e5.png" alt="Logo">
+            UTA <span>HUB</span>
+        </div>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="Uta-Hub-Links.html">Наши соц сети</a></li>
+                <li><a href="#" class="btn-download-nav">Задания</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Основной контейнер с локером -->
+    <section class="locker-container">
+        <div class="card-body">
+            <div class="tasks-heading">Complete Tasks to Continue</div>
+            
+            <div class="tasks-list">
+                
+                <!-- ЗАДАНИЕ №1: OPERA (10 секунд) -->
+                <div class="task-item" data-url="https://www.opera.com/ru/computer/thanks?ni=stable&os=windows" data-time="10" onclick="startTask(this)">
+                    <div class="task-info">
+                        <div class="task-icon-wrap"><i class="fa-brands fa-opera"></i></div>
+                        <div class="task-text">
+                            <h4>Откройте для себя удобный Браузер Opera</h4>
+                            <p>Перейдите на страницу и сделайте то что там просят</p>
+                        </div>
+                    </div>
+                    <div class="task-status">
+                        <span></span><i class="fa-solid fa-check"></i>
+                    </div>
+                </div>
+
+                <!-- ЗАДАНИЕ №2: WINK (10 секунд) -->
+                <div class="task-item" data-url="https://wink.ru/free" data-time="11" onclick="startTask(this)">
+                    <div class="task-info">
+                        <div class="task-icon-wrap"><i class="fa-solid fa-bell"></i></div>
+                        <div class="task-text">
+                            <h4>Принимайте уведомления на этом сайте</h4>
+                            <p>Включите оповещения и дождитесь проверки</p>
+                        </div>
+                    </div>
+                    <div class="task-status">
+                        <span></span><i class="fa-solid fa-check"></i>
+                    </div>
+                </div>
+
+                <!-- ЗАДАНИЕ №3: WOWP (35 секунды) -->
+                <div class="task-item" data-url="https://wargaming.net/en/games/wowp" data-time="35" onclick="startTask(this)">
+                    <div class="task-info">
+                        <div class="task-icon-wrap"><i class="fa-solid fa-gamepad"></i></div>
+                        <div class="task-text">
+                            <h4>Скачайте эту игру</h4>
+                            <p>Запустите загрузку и наслаждайтесь игрой</p>
+                        </div>
+                    </div>
+                    <div class="task-status">
+                        <span></span><i class="fa-solid fa-check"></i>
+                    </div>
+                </div>
+
+                <!-- ЗАДАНИЕ №4: ВИДЕО YOUTUBE (39 секунд) -->
+                <div class="task-item" data-url="https://www.youtube.com/watch?v=JyECrGp-Sw8" data-time="40" onclick="startTask(this)">
+                    <div class="task-info">
+                        <div class="task-icon-wrap"><i class="fa-solid fa-video"></i></div>
+                        <div class="task-text">
+                            <h4>Посмотрите научное видео</h4>
+                            <p>Смотрите ролик и узнайте что то новое для себя</p>
+                        </div>
+                    </div>
+                    <div class="task-status">
+                        <span></span><i class="fa-solid fa-check"></i>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Главная Кнопка -->
+            <button class="btn-claim" id="claimBtn" disabled><i class="fa-solid fa-lock"></i> Claim Reward</button>
+        </div>
+    </section>
+
+    <script>
+        // Функция обработки клика и запуска таймера
+        function startTask(element) {
+            // Защита, чтобы нельзя было запустить повторно во время работы
+            if (element.classList.contains('running') || element.classList.contains('done')) return;
+
+            // Открываем ссылку офера в новой вкладке
+            const link = element.getAttribute('data-url');
+            window.open(link, '_blank');
+
+            // Переводим элемент в статус работы таймера
+            element.classList.add('running');
+            
+            // Получаем персональное время ожидания для этого блока
+            let timeLeft = parseInt(element.getAttribute('data-time'), 10);
+            const statusBox = element.querySelector('.task-status span');
+            
+            // Сразу выводим стартовую секунду
+            statusBox.textContent = timeLeft;
+
+            // Запускаем интервал ежесекундного отсчета
+            const timer = setInterval(() => {
+                timeLeft--;
+                statusBox.textContent = timeLeft;
+
+                // Когда таймер дошел до 0
+                if (timeLeft <= 0) {
+                    clearInterval(timer); // Стоп таймер
+                    element.classList.remove('running');
+                    element.classList.add('done'); // Зажигаем зеленую галочку #1fff3d
+                    
+                    checkProgress(); // Проверяем общую готовность локера
+                }
+            }, 1000);
+        }
+
+        // Проверка выполнения всех 4-х заданий
+        function checkProgress() {
+            const allItems = document.querySelectorAll('.task-item').length;
+            const doneItems = document.querySelectorAll('.task-item.done').length;
+            const claimBtn = document.getElementById('claimBtn');
+
+            // Если все галочки получены
+            if (doneItems === allItems) {
+                claimBtn.removeAttribute('disabled');
+                claimBtn.classList.add('active');
+                claimBtn.innerHTML = '<i class="fa-solid fa-lock-open"></i> Claim Reward';
+            }
+        }
+
+        // Клик на кнопку Claim Reward -> ПЕРЕНАПРАВЛЕНИЕ
+        document.getElementById('claimBtn').addEventListener('click', function() {
+            if (this.classList.contains('active')) {
+                window.location.href = 'Uta-Hub-Get-Script.html';
+            }
+        });
+    </script>
+</body>
+</html>
